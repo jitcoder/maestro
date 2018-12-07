@@ -1,0 +1,20 @@
+#!/bin/bash
+
+ORIGIN="$(pwd)"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $DIR
+cd ..
+DIR="$(pwd)"
+cd $ORIGIN
+
+docker stop maestro_mongo
+docker rm maestro_mongo
+docker build $DIR/docker/mongo -t maestro_mongo
+docker run \
+  --name maestro_mongo \
+  -m 512m \
+  -p 27017:27017 \
+  -v $DIR/docker/mongo/data:/data/db \
+  -d \
+  --add-host=parent:`ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | sed -e '$!d'` \
+  maestro_mongo:latest

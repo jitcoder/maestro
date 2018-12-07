@@ -1,0 +1,15 @@
+version: '3'
+services:
+  inventory:
+    build: ./packages/todo-service/.
+    ports:
+      - 3000:3000
+    links:
+      - sql
+  sql:
+    image: "microsoft/mssql-server-linux"
+    environment:
+      SA_PASSWORD: "YouShallNotPass1!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - 1433:1433
